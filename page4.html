@@ -413,7 +413,39 @@ body::before{
  transform:translateY(-3px) scale(1.02);
  box-shadow:0 10px 35px rgba(215,172,57,.4);
 }
+.teacher-signature{
+ margin-top:18px;
+ text-align:center;
+ animation:signatureAppear 1s ease 1.2s both;
+}
 
+.teacher-label{
+ display:block;
+ color:#a8c3b8;
+ font-size:11px;
+ font-weight:600;
+ margin-bottom:2px;
+}
+
+.teacher-name{
+ display:inline-block;
+ color:#f0ce68;
+ font-size:clamp(17px,2.5vw,23px);
+ font-weight:900;
+ text-shadow:0 0 18px rgba(240,206,104,.35);
+ letter-spacing:.3px;
+}
+
+@keyframes signatureAppear{
+ from{
+   opacity:0;
+   transform:translateY(10px);
+ }
+ to{
+   opacity:1;
+   transform:translateY(0);
+ }
+}
 @media(max-width:600px){
  .page{padding:10px}
  .card{min-height:650px;padding:30px 15px;border-radius:25px}
@@ -531,6 +563,11 @@ body::before{
 
 <div class="quote">
 كل رقم حللته... وكل تحدٍ تجاوزته... كان خطوة نحو إنجاز أكبر.
+</div>
+
+<div class="teacher-signature">
+    <span class="teacher-label">معلمتكِ</span>
+    <span class="teacher-name">عايشه المطيري ✨</span>
 </div>
 
 <button class="button" onclick="backToMap()">
