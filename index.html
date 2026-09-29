@@ -22,33 +22,27 @@
     }
 
     .page {
-      width: 100vw;
-      height: 100vh;
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  background: #f1ede2;
+}
 
-      display: flex;
-      align-items: center;
-      justify-content: center;
+.image-box {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
 
-      background: #f1ede2;
-      overflow: hidden;
-    }
+.main-image {
+  width: 100%;
+  height: 100%;
 
-    .image-box {
-      position: relative;
+  display: block;
 
-      width: min(100vw, calc(100vh * 1280 / 669));
-      aspect-ratio: 1280 / 669;
-
-      flex-shrink: 0;
-    }
-
-    .main-image {
-      width: 100%;
-      height: 100%;
-
-      display: block;
-      object-fit: contain;
-    }
+  object-fit: fill;
+}
 
     .start-btn {
   position: absolute;
