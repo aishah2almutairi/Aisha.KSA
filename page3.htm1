@@ -1,0 +1,1885 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لو كانت السعودية معادلة؟</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{
+    width:100%;height:100%;overflow:hidden;
+    font-family:Tahoma,Arial,system-ui,sans-serif;
+    background:#f1ede2;
+}
+button{font-family:inherit}
+
+.map-container{
+    position:relative;width:100vw;height:100vh;overflow:hidden;
+    background-image:url('https://i.postimg.cc/nV1BXMhZ/4FD9E3F3-1005-4A2C-9526-D1C181AE1225.png');
+    background-size:100% 100%;
+    background-position:center;
+    background-repeat:no-repeat;
+}
+
+.city-btn{
+    position:absolute;
+    border:none;
+    outline:none;
+    border-radius:50px;
+    cursor:pointer;
+    background:rgba(0,0,0,0);
+    z-index:20;
+    transition:.25s ease;
+}
+
+.city-btn:hover{
+    background:rgba(255,255,255,.24);
+    box-shadow:
+        0 0 15px rgba(255,255,255,.85),
+        0 0 30px rgba(23,96,68,.55);
+    transform:scale(1.07);
+}
+
+.city-btn:active{
+    transform:scale(.95);
+}
+
+.btn-jouf{top:22%;left:34%;width:7%;height:5%}
+.btn-hail{top:27%;left:41%;width:7%;height:5%}
+.btn-qassim{top:38%;left:49%;width:8%;height:5%}
+.btn-madinah{top:38%;left:31%;width:11%;height:5%}
+.btn-makkah{top:50%;left:37%;width:10%;height:5%}
+.btn-riyadh{top:45%;left:54%;width:8%;height:5%}
+.btn-eastern{top:50%;left:65%;width:11%;height:5%}
+.btn-asir{top:69%;left:45%;width:7%;height:5%}
+.btn-jazan{top:77%;left:48%;width:7%;height:5%}
+
+.city-btn.completed::after{
+    content:"✓";
+    position:absolute;
+    top:-8px;
+    right:-5px;
+    width:22px;
+    height:22px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    background:#176044;
+    color:#fff;
+    border:2px solid #fff;
+    font-size:12px;
+    font-weight:900;
+    box-shadow:0 0 15px rgba(23,96,68,.8);
+    animation:checkPop .45s ease;
+}
+
+@keyframes checkPop{
+    0%{transform:scale(0)}
+    65%{transform:scale(1.2)}
+    100%{transform:scale(1)}
+}
+
+.puzzle-counter{
+    position:absolute;
+    top:18px;
+    left:20px;
+    z-index:50;
+    display:flex;
+    align-items:center;
+    gap:9px;
+    padding:10px 16px;
+    border-radius:30px;
+    border:1px solid rgba(191,151,64,.30);
+    background:rgba(255,253,245,.88);
+    color:#176044;
+    font-size:12px;
+    font-weight:900;
+    cursor:pointer;
+    box-shadow:0 8px 25px rgba(20,76,53,.13);
+    backdrop-filter:blur(10px);
+    transition:.25s ease;
+}
+
+.puzzle-counter:hover{
+    transform:translateY(-2px);
+    box-shadow:0 13px 30px rgba(20,76,53,.20);
+}
+
+.puzzle-icon{
+    font-size:18px
+}
+
+.puzzle-count{
+    color:#b18426;
+    margin-right:3px
+}
+
+.hint{
+    position:absolute;
+    left:50%;
+    bottom:18px;
+    transform:translateX(-50%);
+    z-index:30;
+    padding:9px 19px;
+    border-radius:30px;
+    background:rgba(255,253,245,.82);
+    color:#176044;
+    font-size:11px;
+    font-weight:800;
+    border:1px solid rgba(191,151,64,.18);
+    backdrop-filter:blur(8px);
+    white-space:nowrap;
+    box-shadow:0 7px 20px rgba(20,76,53,.09);
+}
+
+.overlay{
+    position:absolute;
+    inset:0;
+    z-index:100;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:rgba(7,39,28,.40);
+    backdrop-filter:blur(9px);
+    -webkit-backdrop-filter:blur(9px);
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    transition:opacity .35s ease,visibility .35s ease;
+}
+
+.overlay.active{
+    opacity:1;
+    visibility:visible;
+    pointer-events:auto;
+}
+
+.challenge-card{
+    position:relative;
+    width:min(570px,94vw);
+    max-height:91vh;
+    overflow:auto;
+    padding:28px 40px 35px;
+    border-radius:30px;
+    background:linear-gradient(
+        145deg,
+        rgba(255,253,246,.99),
+        rgba(243,239,226,.98)
+    );
+    border:1px solid rgba(197,160,73,.35);
+    box-shadow:0 30px 80px rgba(7,45,30,.34);
+    text-align:center;
+    transform:translateY(25px) scale(.96);
+    transition:transform .45s cubic-bezier(.2,.8,.2,1);
+}
+
+.overlay.active .challenge-card{
+    transform:translateY(0) scale(1);
+}
+
+.close-btn{
+    position:absolute;
+    top:14px;
+    left:14px;
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    border:1px solid rgba(23,96,68,.12);
+    background:rgba(23,96,68,.06);
+    color:#176044;
+    font-size:19px;
+    cursor:pointer;
+    transition:.25s ease;
+    z-index:10;
+}
+
+.close-btn:hover{
+    background:#176044;
+    color:white;
+    transform:rotate(90deg);
+}
+
+/* تنسيق إطار الصورة الموحد */
+.region-image-wrap{
+    position:relative;
+    width:100%;
+    height:190px;
+    margin:0 0 20px;
+    border-radius:22px;
+    overflow:hidden;
+    background:#dfe5dc;
+    box-shadow:0 12px 30px rgba(20,76,53,.15);
+}
+
+.region-image{
+    width:100%;
+    height:100%;
+    display:block;
+    object-fit:cover;
+    object-position:center;
+    transition:transform .6s ease,opacity .3s ease;
+}
+
+.overlay.active .region-image{
+    transform:scale(1.02);
+}
+
+.region-image-wrap::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(
+        to top,
+        rgba(7,48,34,.28),
+        transparent 55%
+    );
+    pointer-events:none;
+}
+
+.region-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:8px 16px;
+    border-radius:30px;
+    background:rgba(22,96,68,.08);
+    color:#176044;
+    font-size:12px;
+    font-weight:800;
+    margin-bottom:12px;
+}
+
+.gold-dot{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:#d2a538;
+    box-shadow:0 0 10px rgba(210,165,56,.65);
+}
+
+.math-title{
+    color:#176044;
+    font-size:clamp(30px,5vw,44px);
+    font-weight:900;
+    line-height:1.25;
+    margin-bottom:14px;
+}
+
+.region-description{
+    color:#666e68;
+    font-size:15px;
+    line-height:2;
+    max-width:430px;
+    margin:0 auto 24px;
+}
+
+.start-btn{
+    min-width:215px;
+    padding:14px 25px;
+    border:none;
+    border-radius:50px;
+    background:linear-gradient(135deg,#17664a,#0c4934);
+    color:white;
+    font-size:15px;
+    font-weight:900;
+    cursor:pointer;
+    box-shadow:0 12px 25px rgba(17,83,58,.25);
+    transition:.25s ease;
+}
+
+.start-btn:hover{
+    transform:translateY(-3px);
+    box-shadow:0 17px 32px rgba(17,83,58,.34);
+}
+
+.question-screen,
+.success-screen{
+    display:none
+}
+
+.challenge-card.question-mode .intro-screen{
+    display:none
+}
+
+.challenge-card.question-mode .question-screen{
+    display:block
+}
+
+.challenge-card.success-mode .intro-screen,
+.challenge-card.success-mode .question-screen{
+    display:none
+}
+
+.challenge-card.success-mode .success-screen{
+    display:block
+}
+
+.question-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:23px;
+}
+
+.question-subject{
+    padding:7px 13px;
+    border-radius:20px;
+    background:#176044;
+    color:white;
+    font-size:11px;
+    font-weight:800;
+}
+
+.points{
+    color:#a87b20;
+    font-size:12px;
+    font-weight:900;
+}
+
+.question-number{
+    color:#b78a2b;
+    font-size:12px;
+    font-weight:900;
+    margin-bottom:8px;
+}
+
+.question-text{
+    color:#174e39;
+    font-size:clamp(18px,2.4vw,25px);
+    font-weight:900;
+    line-height:1.8;
+    margin-bottom:23px;
+}
+
+.answers{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:11px;
+    margin-bottom:17px;
+}
+
+.answer-btn{
+    min-height:61px;
+    padding:12px;
+    border-radius:17px;
+    border:1px solid rgba(23,96,68,.13);
+    background:rgba(255,255,255,.76);
+    color:#275842;
+    font-size:14px;
+    font-weight:800;
+    cursor:pointer;
+    transition:.2s ease;
+}
+
+.answer-btn:hover:not(:disabled){
+    transform:translateY(-2px);
+    background:#edf4ed;
+    border-color:rgba(23,96,68,.34);
+    box-shadow:0 8px 20px rgba(20,76,53,.10);
+}
+
+.answer-btn.correct{
+    background:#dcefe1;
+    border-color:#4d9a68;
+    color:#176044;
+}
+
+.answer-btn.wrong{
+    background:#f5dfdb;
+    border-color:#c96d5e;
+    color:#9c4437;
+    animation:shake .3s ease;
+}
+
+@keyframes shake{
+    25%{transform:translateX(-4px)}
+    50%{transform:translateX(4px)}
+    75%{transform:translateX(-3px)}
+}
+
+.feedback{
+    min-height:48px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:9px 13px;
+    border-radius:15px;
+    font-size:13px;
+    font-weight:900;
+    opacity:0;
+    transform:translateY(5px);
+    transition:.3s ease;
+}
+
+.feedback.show{
+    opacity:1;
+    transform:translateY(0);
+}
+
+.feedback.success{
+    background:rgba(65,139,87,.10);
+    color:#237044;
+}
+
+.feedback.error{
+    background:rgba(185,77,61,.09);
+    color:#a14c40;
+}
+
+.next-btn{
+    display:none;
+    width:100%;
+    margin-top:11px;
+    padding:13px;
+    border:none;
+    border-radius:18px;
+    background:#176044;
+    color:white;
+    font-size:14px;
+    font-weight:900;
+    cursor:pointer;
+}
+
+.next-btn.show{
+    display:block
+}
+
+.success-icon{
+    width:78px;
+    height:78px;
+    margin:0 auto 16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    background:radial-gradient(circle,#f8e7a5,#d2a33a);
+    color:white;
+    font-size:35px;
+    box-shadow:
+        0 0 0 9px rgba(210,163,58,.10),
+        0 0 35px rgba(210,163,58,.35);
+    animation:successBounce .7s ease;
+}
+
+@keyframes successBounce{
+    0%{transform:scale(.5);opacity:0}
+    60%{transform:scale(1.15)}
+    100%{transform:scale(1);opacity:1}
+}
+
+.success-title{
+    color:#176044;
+    font-size:29px;
+    font-weight:900;
+    margin-bottom:9px;
+}
+
+.success-description{
+    color:#69736d;
+    line-height:1.9;
+    font-size:14px;
+    margin-bottom:16px;
+}
+
+.earned-piece-wrap{
+    position:relative;
+    width:190px;
+    height:120px;
+    margin:0 auto 14px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.earned-piece{
+    position:relative;
+    width:150px;
+    height:92px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(135deg,#176044,#23815d);
+    color:#fffdf2;
+    border:3px solid #d6ad4e;
+    box-shadow:
+        0 14px 35px rgba(23,96,68,.28),
+        0 0 25px rgba(210,163,58,.22);
+    clip-path:polygon(
+        0% 18%,17% 18%,20% 8%,27% 2%,35% 5%,39% 15%,
+        58% 15%,61% 5%,69% 1%,77% 5%,80% 15%,100% 15%,
+        100% 38%,91% 42%,87% 50%,91% 59%,100% 63%,
+        100% 100%,76% 100%,73% 91%,65% 87%,57% 91%,54% 100%,
+        31% 100%,28% 90%,20% 87%,12% 91%,9% 100%,0% 100%
+    );
+    animation:pieceDrop .8s cubic-bezier(.2,.8,.2,1);
+}
+
+@keyframes pieceDrop{
+    0%{
+        opacity:0;
+        transform:translateY(-40px) rotate(-10deg) scale(.6)
+    }
+    65%{
+        transform:translateY(8px) rotate(3deg) scale(1.06)
+    }
+    100%{
+        opacity:1;
+        transform:translateY(0) rotate(0) scale(1)
+    }
+}
+
+.earned-piece-text{
+    position:absolute;
+    width:110px;
+    text-align:center;
+    font-size:16px;
+    font-weight:900;
+    line-height:1.35;
+    z-index:2;
+    text-shadow:0 2px 5px rgba(0,0,0,.18);
+}
+
+.earned-piece-symbol{
+    position:absolute;
+    top:8px;
+    right:13px;
+    color:#e5c46c;
+    font-size:15px;
+    font-weight:900;
+}
+
+.piece-label{
+    color:#a87b20;
+    font-size:12px;
+    font-weight:900;
+    margin-bottom:18px;
+}
+
+.back-map-btn{
+    width:100%;
+    padding:13px;
+    border-radius:18px;
+    border:1px solid rgba(23,96,68,.18);
+    background:rgba(23,96,68,.07);
+    color:#176044;
+    font-size:14px;
+    font-weight:900;
+    cursor:pointer;
+    transition:.25s ease;
+}
+
+.back-map-btn:hover{
+    background:#176044;
+    color:white;
+}
+
+.puzzle-overlay{
+    position:absolute;
+    inset:0;
+    z-index:200;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:rgba(7,38,27,.66);
+    backdrop-filter:blur(13px);
+    -webkit-backdrop-filter:blur(13px);
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    transition:.4s ease;
+}
+
+.puzzle-overlay.active{
+    opacity:1;
+    visibility:visible;
+    pointer-events:auto;
+}
+
+.puzzle-board{
+    position:relative;
+    width:min(780px,95vw);
+    max-height:94vh;
+    overflow:auto;
+    padding:32px 30px 27px;
+    border-radius:32px;
+    background:linear-gradient(145deg,#fffdf5,#eee8d8);
+    border:1px solid rgba(205,166,73,.40);
+    box-shadow:0 35px 100px rgba(0,0,0,.30);
+    text-align:center;
+    transform:scale(.93) translateY(20px);
+    transition:.45s cubic-bezier(.2,.8,.2,1);
+}
+
+.puzzle-overlay.active .puzzle-board{
+    transform:scale(1) translateY(0);
+}
+
+.puzzle-close{
+    position:absolute;
+    top:13px;
+    left:13px;
+    width:35px;
+    height:35px;
+    border:none;
+    border-radius:50%;
+    background:rgba(23,96,68,.08);
+    color:#176044;
+    font-size:19px;
+    cursor:pointer;
+    transition:.25s ease;
+}
+
+.puzzle-close:hover{
+    background:#176044;
+    color:white;
+    transform:rotate(90deg);
+}
+
+.puzzle-heading{
+    color:#176044;
+    font-size:clamp(24px,3vw,35px);
+    font-weight:900;
+    margin-bottom:5px;
+}
+
+.puzzle-subheading{
+    color:#a67c25;
+    font-size:12px;
+    font-weight:800;
+    margin-bottom:13px;
+}
+
+.puzzle-status{
+    min-height:32px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:16px;
+    color:#176044;
+    font-size:13px;
+    font-weight:900;
+}
+
+.puzzle-status span{
+    display:inline-block;
+    padding:7px 15px;
+    border-radius:20px;
+    background:rgba(23,96,68,.07);
+    animation:statusPulse 1.8s ease infinite;
+}
+
+@keyframes statusPulse{
+    0%,100%{box-shadow:0 0 0 rgba(23,96,68,0)}
+    50%{box-shadow:0 0 18px rgba(23,96,68,.10)}
+}
+
+.puzzle-grid{
+    width:min(600px,88vw);
+    aspect-ratio:1.2;
+    margin:0 auto 20px;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    grid-template-rows:repeat(3,1fr);
+    gap:0;
+    position:relative;
+    padding:3px;
+    border-radius:20px;
+    background:#123f2d;
+    box-shadow:0 22px 50px rgba(20,76,53,.27);
+    overflow:hidden;
+}
+
+.puzzle-piece{
+    position:relative;
+    min-width:0;
+    min-height:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#8e8c82;
+    background:linear-gradient(145deg,#e4dfd1,#cec9ba);
+    border:1px solid rgba(255,255,255,.35);
+    opacity:.30;
+    overflow:visible;
+    transition:
+        opacity .5s ease,
+        transform .45s ease,
+        filter .45s ease;
+}
+
+.puzzle-piece.unlocked{
+    opacity:1;
+    color:#fffdf2;
+    background:linear-gradient(135deg,#176044,#27815e);
+    z-index:3;
+    filter:drop-shadow(0 0 9px rgba(210,163,58,.28));
+    animation:puzzleLock .65s cubic-bezier(.2,.8,.2,1);
+}
+
+@keyframes puzzleLock{
+    0%{
+        opacity:0;
+        transform:scale(.55) rotate(-7deg)
+    }
+    65%{
+        transform:scale(1.07) rotate(2deg)
+    }
+    100%{
+        opacity:1;
+        transform:scale(1) rotate(0)
+    }
+}
+
+.puzzle-piece.knob-top::before{
+    content:"";
+    position:absolute;
+    width:28px;
+    height:22px;
+    top:-10px;
+    left:50%;
+    transform:translateX(-50%);
+    border-radius:50% 50% 45% 45%;
+    background:inherit;
+    z-index:4;
+}
+
+.puzzle-piece.knob-bottom::after{
+    content:"";
+    position:absolute;
+    width:28px;
+    height:22px;
+    bottom:-10px;
+    left:50%;
+    transform:translateX(-50%);
+    border-radius:45% 45% 50% 50%;
+    background:inherit;
+    z-index:4;
+}
+
+.puzzle-piece.knob-right span::after{
+    content:"";
+    position:absolute;
+    width:21px;
+    height:27px;
+    right:-10px;
+    top:50%;
+    transform:translateY(-50%);
+    border-radius:50% 45% 45% 50%;
+    background:inherit;
+}
+
+.puzzle-piece.knob-left span::before{
+    content:"";
+    position:absolute;
+    width:21px;
+    height:27px;
+    left:-10px;
+    top:50%;
+    transform:translateY(-50%);
+    border-radius:45% 50% 50% 45%;
+    background:inherit;
+}
+
+.piece-text{
+    position:relative;
+    z-index:7;
+    padding:3px;
+    font-size:clamp(12px,2vw,20px);
+    font-weight:900;
+    line-height:1.2;
+    text-align:center;
+    user-select:none;
+    transition:.4s ease;
+}
+
+.puzzle-piece:not(.unlocked) .piece-text{
+    opacity:.22;
+    filter:blur(.7px);
+}
+
+.puzzle-piece.unlocked .piece-text{
+    opacity:1;
+    text-shadow:0 2px 6px rgba(0,0,0,.20);
+}
+
+.math-symbol{
+    position:absolute;
+    top:6px;
+    right:8px;
+    z-index:8;
+    color:#d9b85f;
+    font-size:11px;
+    font-weight:900;
+    opacity:.85;
+}
+
+.puzzle-piece.latest{
+    box-shadow:
+        inset 0 0 0 2px #e2bb59,
+        0 0 22px rgba(220,183,84,.55);
+    animation:latestGlow 1.3s ease infinite;
+}
+
+@keyframes latestGlow{
+    0%,100%{
+        filter:drop-shadow(0 0 5px rgba(220,183,84,.35))
+    }
+    50%{
+        filter:drop-shadow(0 0 18px rgba(220,183,84,.75))
+    }
+}
+
+.puzzle-progress{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    padding:8px 16px;
+    border-radius:30px;
+    background:rgba(23,96,68,.08);
+    color:#176044;
+    font-size:12px;
+    font-weight:900;
+    margin-bottom:10px;
+}
+
+.puzzle-progress strong{
+    color:#b18426
+}
+
+.puzzle-note{
+    color:#777b76;
+    font-size:11px;
+    line-height:1.8;
+}
+
+.puzzle-overlay.assembling .puzzle-board{
+    animation:assemblyBoard .8s ease both;
+}
+
+.puzzle-overlay.assembling .puzzle-heading{
+    animation:headingPulse .9s ease infinite alternate;
+}
+
+.puzzle-overlay.assembling .puzzle-piece.unlocked{
+    animation:puzzleAssemble .8s cubic-bezier(.2,.8,.2,1) both;
+}
+
+.puzzle-overlay.assembling .puzzle-piece.final-glow{
+    animation:finalPieceGlow 1s ease-in-out infinite alternate;
+}
+
+.puzzle-overlay.assembling .puzzle-status span{
+    background:rgba(210,163,58,.14);
+    color:#9b741e;
+    box-shadow:0 0 25px rgba(210,163,58,.22);
+}
+
+@keyframes assemblyBoard{
+    0%{transform:scale(.9);opacity:.7}
+    60%{transform:scale(1.02)}
+    100%{transform:scale(1);opacity:1}
+}
+
+@keyframes headingPulse{
+    from{transform:scale(1)}
+    to{transform:scale(1.04)}
+}
+
+@keyframes puzzleAssemble{
+    0%{
+        opacity:0;
+        transform:
+            translate(var(--dx),var(--dy))
+            rotate(var(--rot))
+            scale(.45)
+    }
+    55%{
+        opacity:1;
+        transform:
+            translate(0,0)
+            rotate(2deg)
+            scale(1.08)
+    }
+    100%{
+        opacity:1;
+        transform:
+            translate(0,0)
+            rotate(0)
+            scale(1)
+    }
+}
+
+@keyframes finalPieceGlow{
+    from{
+        filter:drop-shadow(0 0 7px rgba(210,163,58,.35))
+    }
+    to{
+        filter:drop-shadow(0 0 25px rgba(210,163,58,.95))
+    }
+}
+
+.final-screen{
+    position:absolute;
+    inset:0;
+    z-index:500;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:radial-gradient(
+        circle at center,
+        rgba(255,253,244,.98),
+        rgba(224,219,204,.99)
+    );
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    transition:opacity .6s ease,visibility .6s ease;
+}
+
+.final-screen.active{
+    opacity:1;
+    visibility:visible;
+    pointer-events:auto;
+}
+
+.final-content{
+    width:min(850px,95vw);
+    text-align:center;
+    transform:translateY(30px) scale(.94);
+    transition:transform .8s cubic-bezier(.2,.8,.2,1);
+}
+
+.final-screen.active .final-content{
+    transform:translateY(0) scale(1);
+}
+
+.final-kicker{
+    color:#b18426;
+    font-size:13px;
+    font-weight:900;
+    margin-bottom:9px;
+    animation:fadeUp .7s ease .2s both;
+}
+
+.final-title{
+    color:#176044;
+    font-size:clamp(32px,5vw,58px);
+    font-weight:900;
+    margin-bottom:7px;
+    animation:fadeUp .7s ease .35s both;
+}
+
+.final-subtitle{
+    color:#68716b;
+    font-size:15px;
+    margin-bottom:25px;
+    animation:fadeUp .7s ease .5s both;
+}
+
+@keyframes fadeUp{
+    from{
+        opacity:0;
+        transform:translateY(15px)
+    }
+    to{
+        opacity:1;
+        transform:translateY(0)
+    }
+}
+
+.final-art{
+    position:relative;
+    width:min(700px,91vw);
+    min-height:270px;
+    margin:0 auto 24px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    border-radius:30px;
+    background:linear-gradient(135deg,#0b432f,#176044,#0b4934);
+    border:4px solid rgba(211,170,67,.75);
+    box-shadow:
+        0 30px 80px rgba(20,76,53,.28),
+        0 0 0 8px rgba(211,170,67,.08);
+    animation:finalBoard .9s cubic-bezier(.2,.8,.2,1);
+}
+
+@keyframes finalBoard{
+    0%{
+        opacity:0;
+        transform:scale(.88)
+    }
+    70%{
+        transform:scale(1.025)
+    }
+    100%{
+        opacity:1;
+        transform:scale(1)
+    }
+}
+
+.final-art::before{
+    content:"Σ   π   √   ∞   %   ×   +   =";
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#d6b45c;
+    font-size:30px;
+    font-weight:900;
+    letter-spacing:15px;
+    opacity:.10;
+    transform:rotate(-7deg);
+    white-space:nowrap;
+}
+
+.final-map{
+    position:absolute;
+    width:min(370px,55%);
+    left:50%;
+    top:44%;
+    transform:translate(-50%,-50%);
+    opacity:.14;
+    filter:brightness(1.4) saturate(.6);
+}
+
+.final-secret{
+    position:relative;
+    z-index:5;
+    padding:16px 22px;
+    color:#fffdf3;
+    font-size:clamp(22px,4vw,38px);
+    font-weight:900;
+    text-shadow:0 3px 15px rgba(0,0,0,.28);
+    animation:secretReveal 1.2s ease .7s both;
+}
+
+@keyframes secretReveal{
+    from{
+        opacity:0;
+        letter-spacing:12px;
+        filter:blur(8px)
+    }
+    to{
+        opacity:1;
+        letter-spacing:0;
+        filter:blur(0)
+    }
+}
+
+.final-under{
+    position:relative;
+    z-index:5;
+    color:#e3c56e;
+    font-size:clamp(15px,2.4vw,21px);
+    font-weight:900;
+    margin-top:4px;
+    animation:fadeUp .8s ease 1s both;
+}
+
+.final-btn{
+    border:none;
+    padding:14px 30px;
+    border-radius:50px;
+    background:linear-gradient(135deg,#17664a,#0b4733);
+    color:white;
+    font-size:14px;
+    font-weight:900;
+    cursor:pointer;
+    box-shadow:0 12px 25px rgba(17,83,58,.25);
+    animation:fadeUp .8s ease 1.2s both;
+    transition:.25s ease;
+}
+
+.final-btn:hover{
+    transform:translateY(-3px);
+    box-shadow:0 17px 32px rgba(17,83,58,.34);
+}
+
+.confetti{
+    position:absolute;
+    width:8px;
+    height:15px;
+    top:-20px;
+    opacity:0;
+    z-index:10;
+    animation:confettiFall var(--duration) linear forwards;
+    transform:rotate(var(--rotation));
+}
+
+@keyframes confettiFall{
+    0%{
+        opacity:1;
+        transform:translateY(0) rotate(0)
+    }
+    100%{
+        opacity:0;
+        transform:translateY(110vh) rotate(540deg)
+    }
+}
+
+.reset-game-btn{
+    margin-top:14px;
+    border:1px solid rgba(23,96,68,.22);
+    background:rgba(255,255,255,.72);
+    color:#176044;
+    border-radius:12px;
+    padding:9px 16px;
+    font-family:inherit;
+    font-weight:800;
+    cursor:pointer;
+    transition:.2s ease;
+}
+
+.reset-game-btn:hover{
+    transform:translateY(-2px);
+    background:white;
+}
+
+@media(max-width:700px){
+    .puzzle-counter{
+        top:10px;
+        left:10px;
+        padding:7px 11px;
+        font-size:10px;
+    }
+
+    .puzzle-icon{
+        font-size:15px
+    }
+
+    .hint{
+        bottom:8px;
+        font-size:9px;
+        padding:7px 12px;
+    }
+
+    .challenge-card{
+        padding:28px 21px 24px;
+        border-radius:24px;
+    }
+
+    .region-image-wrap{
+        height:155px;
+        border-radius:18px;
+        margin-bottom:15px;
+    }
+
+    .math-title{
+        font-size:31px;
+    }
+
+    .answers{
+        grid-template-columns:1fr;
+    }
+
+    .answer-btn{
+        min-height:53px;
+    }
+
+    .puzzle-board{
+        padding:28px 10px 20px;
+        border-radius:25px;
+    }
+
+    .puzzle-grid{
+        width:92vw;
+        aspect-ratio:1;
+    }
+
+    .piece-text{
+        font-size:11px;
+    }
+
+    .math-symbol{
+        font-size:8px;
+        top:4px;
+        right:4px;
+    }
+
+    .final-art{
+        width:94vw;
+        min-height:230px;
+        border-radius:22px;
+    }
+
+    .final-secret{
+        font-size:22px;
+    }
+}
+
+@media(max-height:650px){
+    .challenge-card{
+        max-height:94vh;
+        padding-top:24px;
+        padding-bottom:20px;
+    }
+
+    .region-image-wrap{
+        height:125px;
+        margin-bottom:10px;
+    }
+
+    .region-description{
+        margin-bottom:13px;
+    }
+
+    .puzzle-board{
+        max-height:94vh;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="map-container">
+
+<button class="puzzle-counter" onclick="openPuzzle()">
+    <span class="puzzle-icon">🧩</span>
+    <span>
+        بازل المستقبل
+        <span class="puzzle-count" id="puzzleCount">0 / 9</span>
+    </span>
+</button>
+
+<button class="city-btn btn-jouf" data-region="الجوف" onclick="openChallenge('الجوف')"></button>
+<button class="city-btn btn-hail" data-region="حائل" onclick="openChallenge('حائل')"></button>
+<button class="city-btn btn-qassim" data-region="القصيم" onclick="openChallenge('القصيم')"></button>
+<button class="city-btn btn-madinah" data-region="المدينة المنورة" onclick="openChallenge('المدينة المنورة')"></button>
+<button class="city-btn btn-makkah" data-region="مكة المكرمة" onclick="openChallenge('مكة المكرمة')"></button>
+<button class="city-btn btn-riyadh" data-region="الرياض" onclick="openChallenge('الرياض')"></button>
+<button class="city-btn btn-eastern" data-region="المنطقة الشرقية" onclick="openChallenge('المنطقة الشرقية')"></button>
+<button class="city-btn btn-asir" data-region="عسير" onclick="openChallenge('عسير')"></button>
+<button class="city-btn btn-jazan" data-region="جازان" onclick="openChallenge('جازان')"></button>
+
+<div class="hint">
+    ✦ اختاري منطقة واكتشفي قطعة جديدة من المعادلة السرية
+</div>
+
+<div class="overlay" id="challengeOverlay" onclick="closeOutside(event)">
+    <div class="challenge-card" id="challengeCard">
+        <button class="close-btn" onclick="closeChallenge()">×</button>
+
+        <div class="intro-screen">
+            <div class="region-badge" id="regionBadge">
+                <span class="gold-dot"></span>
+                منطقة مكة المكرمة
+            </div>
+
+            <div class="region-image-wrap">
+                <img class="region-image" id="regionImage" src="" alt="">
+            </div>
+
+            <div class="math-title" id="mathTitle">
+                حل المعادلة
+            </div>
+
+            <p class="region-description" id="regionDescription">
+                استعدي لتحدٍ رياضي جديد واكتشفي الإجابة الصحيحة!
+            </p>
+
+            <button class="start-btn" onclick="startQuestion()">
+                ابدئي التحدي ←
+            </button>
+        </div>
+
+        <div class="question-screen">
+            <div class="question-top">
+                <span class="question-subject" id="questionSubject">
+                    معادلات
+                </span>
+                <span class="points">
+                    +100 نقطة
+                </span>
+            </div>
+
+            <div class="question-number" id="questionNumber">
+                تحدي 01
+            </div>
+
+            <div class="question-text" id="questionText">
+                السؤال هنا...
+            </div>
+
+            <div class="answers" id="answersContainer">
+            </div>
+
+            <div class="feedback" id="feedback">
+            </div>
+
+            <button class="next-btn" id="nextBtn" onclick="showSuccess()">
+                استلام قطعة البازل 🧩
+            </button>
+        </div>
+
+        <div class="success-screen">
+            <div class="success-icon">
+                ✓
+            </div>
+
+            <h2 class="success-title">
+                إجابة رائعة!
+            </h2>
+
+            <p class="success-description">
+                أحسنتِ! حصلتِ على جزء جديد من
+                <strong>المعادلة السرية</strong>.
+            </p>
+
+            <div class="earned-piece-wrap">
+                <div class="earned-piece">
+                    <span class="earned-piece-text" id="earnedPieceText">
+                        بالـ
+                    </span>
+                    <span class="earned-piece-symbol">
+                        Σ
+                    </span>
+                </div>
+            </div>
+
+            <div class="piece-label" id="pieceLabel">
+                القطعة 1 من 9
+            </div>
+
+            <button class="back-map-btn" onclick="returnToMap()">
+                العودة إلى الخريطة
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="puzzle-overlay" id="puzzleOverlay" onclick="closePuzzleOutside(event)">
+    <div class="puzzle-board">
+        <button class="puzzle-close" onclick="closePuzzle()">×</button>
+
+        <h2 class="puzzle-heading">
+            بازل المستقبل 🧩
+        </h2>
+
+        <p class="puzzle-subheading">
+            كل إجابة صحيحة تكشف جزءًا من الرسالة السرية
+        </p>
+
+        <div class="puzzle-status" id="puzzleStatus">
+            <span>
+                المعادلة ما زالت مخفية... 👀
+            </span>
+        </div>
+
+        <div class="puzzle-grid" id="puzzleGrid">
+            <div class="puzzle-piece knob-right" data-region="الجوف">
+                <span class="math-symbol">Σ</span>
+                <span class="piece-text">بالـ</span>
+            </div>
+
+            <div class="puzzle-piece knob-left knob-right" data-region="حائل">
+                <span class="math-symbol">π</span>
+                <span class="piece-text">ريـ</span>
+            </div>
+
+            <div class="puzzle-piece knob-left knob-bottom" data-region="القصيم">
+                <span class="math-symbol">√</span>
+                <span class="piece-text">اضـ</span>
+            </div>
+
+            <div class="puzzle-piece knob-top knob-right" data-region="المدينة المنورة">
+                <span class="math-symbol">∞</span>
+                <span class="piece-text">يات</span>
+            </div>
+
+            <div class="puzzle-piece knob-left knob-right" data-region="مكة المكرمة">
+                <span class="math-symbol">+</span>
+                <span class="piece-text">نبـ</span>
+            </div>
+
+            <div class="puzzle-piece knob-left knob-bottom" data-region="الرياض">
+                <span class="math-symbol">=</span>
+                <span class="piece-text">ني</span>
+            </div>
+
+            <div class="puzzle-piece knob-top knob-right" data-region="المنطقة الشرقية">
+                <span class="math-symbol">%</span>
+                <span class="piece-text">المـ</span>
+            </div>
+
+            <div class="puzzle-piece knob-left knob-right" data-region="عسير">
+                <span class="math-symbol">×</span>
+                <span class="piece-text">ستـ</span>
+            </div>
+
+            <div class="puzzle-piece knob-left knob-top" data-region="جازان">
+                <span class="math-symbol">🇸🇦</span>
+                <span class="piece-text">قبل 🇸🇦</span>
+            </div>
+        </div>
+
+        <div class="puzzle-progress">
+            🧩
+            <span>القطع المكتملة:</span>
+            <strong id="boardCount">0 / 9</strong>
+        </div>
+
+        <p class="puzzle-note">
+            كل قطعة صحيحة تقترب بكِ من اكتشاف الرسالة كاملة ✨
+        </p>
+
+        <button class="reset-game-btn" onclick="resetGame()">
+            بدء اللعبة من جديد ↻
+        </button>
+    </div>
+</div>
+
+<div class="final-screen" id="finalScreen">
+    <div class="final-content">
+        <div class="final-kicker">
+            ✦ اكتملت جميع القطع ✦
+        </div>
+
+        <h1 class="final-title">
+            اكتملت المعادلة!
+        </h1>
+
+        <p class="final-subtitle">
+            لقد جمعتِ جميع أجزاء الرسالة السرية
+        </p>
+
+        <div class="final-art">
+            <img class="final-map" src="https://simplemaps.com/static/svg/country/sa/admin1/sa.svg" alt="">
+
+            <div class="final-secret">
+                بالـرياضيات نبني المستقبل 🇸🇦
+            </div>
+
+            <div class="final-under">
+                فالمستقبل يبدأ بكِ ✨
+            </div>
+        </div>
+
+        <button class="final-btn" onclick="finalCelebration()">
+            أنا صانعة المستقبل 🇸🇦
+        </button>
+    </div>
+</div>
+
+</div>
+
+<script>
+const TOTAL_QUESTIONS = 9;
+
+/* مصفوفة الصور الجديدة بالروابط المباشرة المحدثة */
+const regionImages = {
+    "مكة المكرمة": "https://i.postimg.cc/VLSCTYb0/IMG-9896.jpg",
+    "عسير": "https://i.postimg.cc/5yX6Z3jQ/IMG-9897.jpg",
+    "جازان": "https://i.postimg.cc/zDQLT9Pf/IMG-9898.jpg",
+    "المدينة المنورة": "https://i.postimg.cc/7Z8fWS4T/IMG-9900.jpg",
+    "الجوف": "https://i.postimg.cc/yN7WVBWb/IMG-9901.jpg",
+    "حائل": "https://i.postimg.cc/YS800VWW/IMG-9902.jpg",
+    "القصيم": "https://i.postimg.cc/mD5rNHjp/IMG-9903.jpg",
+    "الرياض": "https://i.postimg.cc/qR57X3Q4/IMG-9904.jpg",
+    "المنطقة الشرقية": "https://i.postimg.cc/QCKd6dnt/IMG-9905.jpg"
+};
+
+const challenges = {
+    "الجوف": {
+        subject: "معادلات الخطوة الواحدة",
+        description: "استعدّي لتحدي المعادلات الخطيّة! فكّري جيّداً لتصلي إلى قيمة المتغير.",
+        question: "حل المعادلة التالية: ٨م - ٧ = ١٧",
+        answers: ["أ) م = ٢", "ب) م = ٣", "ج) م = ٤", "د) م = ٥"],
+        correct: 1,
+        piece: "بالـ"
+    },
+    "حائل": {
+        subject: "المعادلات متعددة الخطوات",
+        description: "تحدّي التفكير المنطقي! اجمعي وركّزي لحل المعادلة الخطوة تلو الأخرى.",
+        question: "حل المعادلة التالية: ( هـ + ٥ ) ÷ ١٠ = ٢",
+        answers: ["أ) هـ = ٥", "ب) هـ = ١٠", "ج) هـ = ١٥", "د) هـ = ٢٠"],
+        correct: 2,
+        piece: "ريـ"
+    },
+    "القصيم": {
+        subject: "معادلات الضرب والقسمة",
+        description: "احذري الإشارات عند الحل! ركّزي بين السوالب والموجب لتصلي للحل الصحيح.",
+        question: "حل المعادلة التالية: -٤أ = ٤٨",
+        answers: ["أ) أ = -١٢", "ب) أ = ١٢", "ج) أ = -١٤", "د) أ = ١٤"],
+        correct: 0,
+        piece: "اضـ"
+    },
+    "المدينة المنورة": {
+        subject: "كتابة المعادلات",
+        description: "حوّلي العبارات اللفظية إلى معادلة رياضية دقيقة واكتشفي القطعة التالية.",
+        question: "اكتب الجملة التالية على صورة معادلة: \"ثلاثة أرباع عدد مطروحاً منه ٩ يساوي -٩\"",
+        answers: [
+            "أ) (٣ ÷ ٤)س + ٩ = -٩",
+            "ب) (٣ ÷ ٤)س - ٩ = -٩",
+            "ج) ٩ - (٣ ÷ ٤)س = -٩",
+            "د) (٤ ÷ ٣)س - ٩ = -٩"
+        ],
+        correct: 1,
+        piece: "يات"
+    },
+    "مكة المكرمة": {
+        subject: "القيمة المطلقة",
+        description: "تذكري خواص القيمة المطلقة جيداً قبل اختيار الإجابة!",
+        question: "حل المعادلة التالية: |س + ٥| = -٣",
+        answers: [
+            "أ) س = -٨",
+            "ب) س = -٢",
+            "ج) س = -٨ أو س = -٢",
+            "د) ليس لها حل"
+        ],
+        correct: 3,
+        piece: "نبـ"
+    },
+    "الرياض": {
+        subject: "الدوال والعلاقات",
+        description: "تحققي من قيم س وتكرارها لتحديد إن كانت العلاقة تمثل دالة أم لا.",
+        question: "هل العلاقة التالية تمثل دالة: {(٢ ، ١) ،(٣ ، -٢) ، (٣ ، ١) ، (٢ ، ٢)}؟",
+        answers: [
+            "أ) نعم، تمثل دالة",
+            "ب) لا، ليست دالة",
+            "ج) دالة متباينة",
+            "د) غير ذلك"
+        ],
+        correct: 1,
+        piece: "ني"
+    },
+    "المنطقة الشرقية": {
+        subject: "المعادلات الخطية",
+        description: "معادلة جديدة تفصل بينك وبين القطعة القادمة من البازل!",
+        question: "حل المعادلة التالية: ٢أ - ٦ = ٤",
+        answers: ["أ) أ = ٢", "ب) أ = ٣", "ج) أ = ٥", "د) أ = ١٠"],
+        correct: 2,
+        piece: "المـ"
+    },
+    "عسير": {
+        subject: "تصنيف المعادلات",
+        description: "هل المعادلة خطية؟ اختبري معرفتك في أسس المتغيرات.",
+        question: "هل المعادلة التالية خطية أم لا: س = ص - ٥؟",
+        answers: [
+            "أ) نعم، المعادلة خطية",
+            "ب) لا، المعادلة ليست خطية",
+            "ج) دالة تربيعية",
+            "د) معادلة جذرية"
+        ],
+        correct: 0,
+        piece: "ستـ"
+    },
+    "جازان": {
+        subject: "الدوال والدرجات",
+        description: "المحطة الأخيرة! انظري إلى أسس المتغيرات وحددي نوع المعادلة لتكتمل الصورة.",
+        question: "هل المعادلة التالية خطية أم لا: ٥س + ص² = ٢٥؟",
+        answers: [
+            "أ) نعم، المعادلة خطية",
+            "ب) لا، المعادلة ليست خطية",
+            "ج) دالة ثابتة",
+            "د) معادلة كسرية"
+        ],
+        correct: 1,
+        piece: "قبل 🇸🇦"
+    }
+};
+
+let selectedRegion = "";
+let currentChallenge = null;
+let answered = false;
+
+const PROGRESS_KEY = "saudiPuzzleProgress_v9q";
+let completedRegions = [];
+
+window.addEventListener("DOMContentLoaded", updateAllProgress);
+
+function openChallenge(region){
+    selectedRegion = region;
+    currentChallenge = challenges[region];
+    if(!currentChallenge) return;
+
+    answered = false;
+    document.getElementById("finalScreen").classList.remove("active");
+
+    const regionBadgeNames = {
+        "الجوف": "منطقة الجوف",
+        "حائل": "منطقة حائل",
+        "القصيم": "منطقة القصيم",
+        "المدينة المنورة": "منطقة المدينة المنورة",
+        "مكة المكرمة": "منطقة مكة المكرمة",
+        "الرياض": "منطقة الرياض",
+        "المنطقة الشرقية": "المنطقة الشرقية",
+        "عسير": "منطقة عسير",
+        "جازان": "منطقة جازان"
+    };
+
+    document.getElementById("regionBadge").innerHTML =
+        '<span class="gold-dot"></span>' + (regionBadgeNames[region] || region);
+
+    document.getElementById("mathTitle").textContent = currentChallenge.subject;
+    document.getElementById("regionDescription").textContent = currentChallenge.description;
+
+    const image = document.getElementById("regionImage");
+    image.src = regionImages[region] || "";
+    image.alt = region;
+
+    image.onerror = function(){
+        this.onerror = null;
+        this.src = "https://placehold.co/1000x500/e8e2d1/176044?text=" + encodeURIComponent(region);
+    };
+
+    const card = document.getElementById("challengeCard");
+    card.classList.remove("question-mode", "success-mode");
+    document.getElementById("challengeOverlay").classList.add("active");
+}
+
+function startQuestion(){
+    if(!currentChallenge) return;
+
+    const card = document.getElementById("challengeCard");
+    card.classList.add("question-mode");
+
+    document.getElementById("questionSubject").textContent = currentChallenge.subject;
+    const number = Object.keys(challenges).indexOf(selectedRegion) + 1;
+    document.getElementById("questionNumber").textContent = "تحدي " + String(number).padStart(2, "0");
+    document.getElementById("questionText").textContent = currentChallenge.question;
+
+    const container = document.getElementById("answersContainer");
+    container.innerHTML = "";
+
+    const feedback = document.getElementById("feedback");
+    feedback.className = "feedback";
+    feedback.textContent = "";
+
+    document.getElementById("nextBtn").classList.remove("show");
+    answered = false;
+
+    currentChallenge.answers.forEach(function(answer, index){
+        const button = document.createElement("button");
+        button.className = "answer-btn";
+        button.textContent = answer;
+        button.onclick = function(){ checkAnswer(index, button); };
+        container.appendChild(button);
+    });
+}
+
+function checkAnswer(index, button){
+    if(answered) return;
+
+    const feedback = document.getElementById("feedback");
+
+    if(index === currentChallenge.correct){
+        answered = true;
+        button.classList.add("correct");
+        document.querySelectorAll(".answer-btn").forEach(btn => btn.disabled = true);
+
+        if(!completedRegions.includes(selectedRegion)){
+            completedRegions.push(selectedRegion);
+            localStorage.setItem(PROGRESS_KEY, JSON.stringify(completedRegions));
+        }
+
+        updateAllProgress();
+        feedback.className = "feedback show success";
+        feedback.innerHTML = "✨ إجابة صحيحة! قطعة جديدة انضمت للمعادلة";
+        document.getElementById("nextBtn").classList.add("show");
+    } else {
+        button.classList.add("wrong");
+        feedback.className = "feedback show error";
+        feedback.innerHTML = "حاولي مرة أخرى ✦ الإجابة ليست صحيحة";
+    }
+}
+
+function showSuccess(){
+    const card = document.getElementById("challengeCard");
+    card.classList.remove("question-mode");
+    card.classList.add("success-mode");
+
+    const count = completedRegions.length;
+    document.getElementById("earnedPieceText").textContent = currentChallenge ? currentChallenge.piece : "🧩";
+    document.getElementById("pieceLabel").textContent = "القطعة " + count + " من " + TOTAL_QUESTIONS + " 🧩";
+}
+
+function returnToMap(){
+    const card = document.getElementById("challengeCard");
+    card.classList.remove("question-mode", "success-mode");
+    document.getElementById("challengeOverlay").classList.remove("active");
+
+    if(completedRegions.length === TOTAL_QUESTIONS){
+        setTimeout(startFinalAssembly, 450);
+    }
+}
+
+function startFinalAssembly(){
+    if(completedRegions.length < TOTAL_QUESTIONS) return;
+
+    const overlay = document.getElementById("puzzleOverlay");
+    overlay.classList.add("active", "assembling");
+
+    const pieces = [...document.querySelectorAll(".puzzle-piece")];
+    const status = document.getElementById("puzzleStatus");
+    status.innerHTML = "<span>لحظة... القطع تتجمع معًا 🧩✨</span>";
+
+    pieces.forEach(function(piece, index){
+        piece.classList.remove("unlocked", "latest", "final-glow");
+        piece.style.setProperty("--dx", ((index % 3) - 1) * 80 + "px");
+        piece.style.setProperty("--dy", (index < 3 ? -90 : index < 6 ? 0 : 90) + "px");
+        piece.style.setProperty("--rot", ((index % 2 === 0 ? 1 : -1) * (8 + index * 2)) + "deg");
+
+        setTimeout(function(){
+            piece.classList.add("unlocked");
+        }, 650 + index * 220);
+    });
+
+    setTimeout(function(){
+        pieces.forEach(function(piece){ piece.classList.add("final-glow"); });
+        status.innerHTML = "<span>اكتملت الصورة! 🇸🇦✨ الرسالة السرية ظهرت</span>";
+    }, 650 + pieces.length * 220 + 500);
+
+    setTimeout(function(){
+        overlay.classList.remove("assembling");
+        showFinal();
+    }, 650 + pieces.length * 220 + 2200);
+}
+
+function closeChallenge(){
+    document.getElementById("challengeOverlay").classList.remove("active");
+    document.getElementById("challengeCard").classList.remove("question-mode", "success-mode");
+}
+
+function closeOutside(event){
+    if(event.target === document.getElementById("challengeOverlay")){
+        closeChallenge();
+    }
+}
+
+function openPuzzle(){
+    updatePuzzlePieces();
+    document.getElementById("puzzleOverlay").classList.add("active");
+}
+
+function closePuzzle(){
+    document.getElementById("puzzleOverlay").classList.remove("active");
+}
+
+function closePuzzleOutside(event){
+    if(event.target === document.getElementById("puzzleOverlay")){
+        closePuzzle();
+    }
+}
+
+function updatePuzzlePieces(){
+    const pieces = document.querySelectorAll(".puzzle-piece");
+
+    pieces.forEach(function(piece){
+        const region = piece.dataset.region;
+        piece.classList.remove("latest");
+
+        if(completedRegions.includes(region)){
+            piece.classList.add("unlocked");
+        } else {
+            piece.classList.remove("unlocked");
+        }
+    });
+
+    if(completedRegions.length > 0){
+        const latestRegion = completedRegions[completedRegions.length - 1];
+        const latestPiece = document.querySelector('.puzzle-piece[data-region="' + latestRegion + '"]');
+        if(latestPiece){
+            latestPiece.classList.add("latest");
+        }
+    }
+
+    updatePuzzleStatus();
+}
+
+function updatePuzzleStatus(){
+    const count = completedRegions.length;
+    const status = document.getElementById("puzzleStatus");
+    let message = "";
+
+    if(count === 0){
+        message = "المعادلة ما زالت مخفية... 👀";
+    } else if(count < 3){
+        message = "بدأت المعادلة بالظهور... ✨";
+    } else if(count < 6){
+        message = "ممتاز! القطع بدأت تتركب مع بعض 🧩";
+    } else if(count < 8){
+        message = "أنتِ في منتصف الطريق! 🔥";
+    } else if(count === 8){
+        message = "بقيت قطعة واحدة فقط... 👀🇸🇦";
+    } else {
+        message = "اكتملت المعادلة! 🎉";
+    }
+
+    status.innerHTML = "<span>" + message + "</span>";
+}
+
+function updateAllProgress(){
+    const saved = localStorage.getItem(PROGRESS_KEY);
+    if(saved){
+        try{ completedRegions = JSON.parse(saved); } catch(e){}
+    }
+
+    const count = completedRegions.length;
+    document.getElementById("puzzleCount").textContent = count + " / " + TOTAL_QUESTIONS;
+    document.getElementById("boardCount").textContent = count + " / " + TOTAL_QUESTIONS;
+
+    updatePuzzlePieces();
+
+    document.querySelectorAll(".city-btn").forEach(function(button){
+        const region = button.dataset.region;
+        if(completedRegions.includes(region)){
+            button.classList.add("completed");
+        } else {
+            button.classList.remove("completed");
+        }
+    });
+}
+
+function showFinal(){
+    if(completedRegions.length < TOTAL_QUESTIONS) return;
+    document.getElementById("finalScreen").classList.add("active");
+    createConfetti();
+}
+
+function createConfetti(){
+    const finalScreen = document.getElementById("finalScreen");
+    if(finalScreen.querySelectorAll(".confetti").length > 0) return;
+
+    for(let i = 0; i < 45; i++){
+        const piece = document.createElement("span");
+        piece.className = "confetti";
+        piece.style.left = Math.random() * 100 + "%";
+        piece.style.setProperty("--duration", (2.5 + Math.random() * 3) + "s");
+        piece.style.setProperty("--rotation", (Math.random() * 360) + "deg");
+        piece.style.animationDelay = Math.random() * 1.3 + "s";
+        piece.style.background = i % 3 === 0 ? "#d2a33a" : i % 3 === 1 ? "#176044" : "#f3e7bc";
+        finalScreen.appendChild(piece);
+    }
+}
+
+function resetGame(){
+    const ok = confirm("هل تريدين بدء اللعبة من الصفر؟\n\nسيتم مسح جميع القطع المكتملة.");
+    if(!ok) return;
+
+    completedRegions = [];
+    localStorage.removeItem(PROGRESS_KEY);
+
+    document.getElementById("finalScreen").classList.remove("active");
+    document.getElementById("puzzleOverlay").classList.remove("active", "assembling");
+    document.getElementById("challengeOverlay").classList.remove("active");
+
+    updateAllProgress();
+}
+
+function finalCelebration(){
+    alert("🇸🇦✨ مبروك!\n\nأكملتِ جميع تحديات المملكة.\n\nبالرياضيات نبني المستقبل.\n\nفالمستقبل يبدأ بكِ.");
+}
+</script>
+
+</body>
+</html>
