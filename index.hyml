@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>لو كانت السعودية معادلة؟</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #f1ede2;
+    }
+
+    .page-background {
+      width: 100vw;
+      height: 100vh;
+
+      background: url('https://i.postimg.cc/B6D1gn3Z/C9F23CF5-2741-4C91-BD91-0FADC3F315E3.png')
+        center / 100% 100% no-repeat;
+
+      position: relative;
+    }
+
+    .start-btn {
+      position: absolute;
+
+      top: 62.8%;
+      right: 56.5%;
+
+      width: 13.5%;
+      height: 5.8%;
+
+      border: 0;
+      border-radius: 50px;
+
+      background: transparent;
+
+      cursor: pointer;
+      z-index: 999;
+
+      display: block;
+
+      transition: 0.2s;
+    }
+
+    .start-btn:hover {
+      background: #ffffff33;
+      box-shadow: 0 0 15px #ffffff80;
+    }
+
+    .start-btn:active {
+      transform: scale(0.95);
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="page-background">
+
+    <!-- زر الانتقال إلى الصفحة الثانية -->
+    <a
+      class="start-btn"
+      href="page2.html"
+      title="ابدئي الرحلة">
+    </a>
+
+  </div>
+
+</body>
+</html>
