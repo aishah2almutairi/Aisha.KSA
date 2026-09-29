@@ -21,37 +21,58 @@
       background: #f1ede2;
     }
 
-    .page-background {
+    .page {
       width: 100vw;
       height: 100vh;
 
-      background: url('https://i.postimg.cc/HLzpthdz/e89ee22f-b500-465d-b080-d6f317384c6b.jpg')
-  center / 100% 100% no-repeat;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
-      position: relative;
+      background: #f1ede2;
+      overflow: hidden;
     }
 
-.start-btn {
-  position: absolute;
+    .image-box {
+      position: relative;
 
-  top: 57.3%;
-  right: 56.5%;
+      width: min(100vw, calc(100vh * 16 / 9));
+      aspect-ratio: 16 / 9;
 
-  width: 14.8%;
-  height: 6.4%;
+      flex-shrink: 0;
+    }
 
-  border: 0;
-  border-radius: 50px;
+    .main-image {
+      width: 100%;
+      height: 100%;
 
-  background: transparent;
+      display: block;
 
-  cursor: pointer;
-  z-index: 999;
+      object-fit: contain;
+    }
 
-  display: block;
+    /* منطقة النقر فوق زر "ابدئي الرحلة" */
+    .start-btn {
+      position: absolute;
 
-  transition: 0.2s;
-}
+      top: 57.3%;
+      right: 56.5%;
+
+      width: 14.8%;
+      height: 6.4%;
+
+      border: 0;
+      border-radius: 50px;
+
+      background: transparent;
+
+      cursor: pointer;
+      z-index: 999;
+
+      display: block;
+
+      transition: 0.2s;
+    }
 
     .start-btn:hover {
       background: #ffffff33;
@@ -66,14 +87,23 @@
 
 <body>
 
-  <div class="page-background">
+  <div class="page">
 
-    <!-- زر الانتقال إلى الصفحة الثانية -->
-    <a
-      class="start-btn"
-      href="page2.html"
-      title="ابدئي الرحلة">
-    </a>
+    <div class="image-box">
+
+      <img
+        class="main-image"
+        src="https://i.postimg.cc/HLzpthdz/e89ee22f-b500-465d-b080-d6f317384c6b.jpg"
+        alt="لو كانت السعودية معادلة؟">
+
+      <!-- زر الانتقال إلى الصفحة الثانية -->
+      <a
+        class="start-btn"
+        href="page2.html"
+        title="ابدئي الرحلة">
+      </a>
+
+    </div>
 
   </div>
 
